@@ -1,4 +1,6 @@
 <link rel="import" href="../polymer/polymer.html"> 
+<link rel="import" href="../core-input/core-input.html"> 
+
 
 <!--
 A Thelma component providing solution to no problem in particular.
@@ -15,8 +17,10 @@ A Thelma component providing solution to no problem in particular.
 
 <polymer-element name="th-simple-api" attributes="url output apiKey">
   <template>
-    <link rel="stylesheet" href="th-simple-api.css">
-    <content></content>
+    <label class="label">API URL: </label><link rel="stylesheet" href="th-simple-api.css">
+    <input is="core-input" value="{{url}}">
+    <label class="label">Output: </label><div class="data">{{output}}</div>
+    
   </template>
   <script>
     Polymer({
@@ -46,8 +50,9 @@ A Thelma component providing solution to no problem in particular.
 
       },
 
-
-
+      urlChanged: function() {
+        this.queryData();
+      },
 
       _makeCORSCall: function(url , mycallback) {
 

@@ -3,4 +3,13 @@
   color: black;
   width: 300px;
   height: 300px;
+  font-family: sans-serif;
+  font-size: 12px;
+
+}
+
+
+
+input {
+	border: 1px solid #eee !important;
 }
