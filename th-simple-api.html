@@ -3,14 +3,14 @@
 
 
 <!--
-A Thelma component providing solution to no problem in particular.
+Simple API component to make API calls.
 
 ##### Example
 
     <th-simple-api></th-simple-api>
 
 @element th-simple-api
-@blurb Element providing solution to no problem in particular.
+@blurb Simple API component to make API calls.
 @status alpha
 @homepage http://thelmanews.github.io/th-simple-api
 -->
@@ -19,7 +19,7 @@ A Thelma component providing solution to no problem in particular.
   <template>
     <label class="label">API URL: </label><link rel="stylesheet" href="th-simple-api.css">
     <input is="core-input" value="{{url}}">
-    <label class="label">Output: </label><div class="data">{{output}}</div>
+    <label class="label">Num Records: </label><div class="data">{{output.length}}</div>
     
   </template>
   <script>
@@ -30,13 +30,10 @@ A Thelma component providing solution to no problem in particular.
 
           
           var self = this;
-          /*
-          setTimeout(function() {
-           // self.queryStatData();
-          }, 7000);
-          */
-          
-          self.queryData();
+
+          if(this.url) {         
+            self.queryData();
+          }
 
       }, 
 
@@ -79,9 +76,12 @@ A Thelma component providing solution to no problem in particular.
 
               var data = JSON.parse(xhr.response);
 
-              self.output = data;
-              //mycallback.call(self,data);
-              //self._displayReturnedData(data);
+              var firstArray = self._findFirstArray(data, 2);
+
+              self.output = self._flattenJSONArray(firstArray);
+              
+              //self.output = self._flattenFirstArrayInJSON(firstArray, 1);
+
 
             };
 
@@ -90,8 +90,89 @@ A Thelma component providing solution to no problem in particular.
             };
 
             xhr.send();
-            console.log('request sent');
-      },           
+      }, 
+
+
+      /**
+       * Recursively looks for the first Array with the size equal greater than minArraySize
+       * @param  {JSON} data         Input data, A deep JSON file including an array containing desired data
+       * @param  {Number} minArraySize Minimum size of the array. If function finds an array smaller than this ignores it 
+       *                               and goes deeper to find an array with at least that minimum size
+       * @return {Array}              Found array
+       */
+      _findFirstArray: function(data, minArraySize) {
+
+        var result = {};
+        var firstArray = null; 
+        function recurse (cur, prop) {
+            if(firstArray)
+              return;
+
+            if (Object(cur) !== cur) {
+                return;
+            }
+            if (Array.isArray(cur) && cur.length>=minArraySize) {
+                if(!firstArray) {
+                  firstArray = cur;
+                }
+                
+            } else {
+                var isEmpty = true;
+                for (var p in cur) {
+                    isEmpty = false;
+                    recurse(cur[p], prop ? prop+"."+p : p);
+                }
+                // if (isEmpty && prop)
+                //     result[prop] = {};
+            }
+        }
+        recurse(data, "");
+        return firstArray;
+
+
+      },
+      /**
+       * Flattens the Objects in the array. If objects within array are already flat (one level deep) doesn't do anything.
+       * @param  {Array} array Input array
+       * @return {Array}       Flattened array
+       */
+      _flattenJSONArray: function(array) {
+
+        var flatArray = array.map(function(item,index) {
+          return this._flattenJSON(item);
+        }.bind(this));
+
+        return flatArray;
+
+      },
+      /**
+       * Recursively iterates over every element of the JSON object and creates a flat (one level deep) Object
+       * @param  {JSON} data input
+       * @return {JSON}      flattened output
+       */
+      _flattenJSON: function(data) {
+        var result = {};
+        function recurse (cur, prop) {
+            if (Object(cur) !== cur) {
+                result[prop] = cur;
+            } else if (Array.isArray(cur)) {
+                 for(var i=0, l=cur.length; i<l; i++)
+                     recurse(cur[i], prop + "[" + i + "]");
+                if (l == 0)
+                    result[prop] = [];
+            } else {
+                var isEmpty = true;
+                for (var p in cur) {
+                    isEmpty = false;
+                    recurse(cur[p], prop ? prop+"."+p : p);
+                }
+                if (isEmpty && prop)
+                    result[prop] = {};
+            }
+        }
+        recurse(data, "");
+        return result;
+      }          
       
     });
   </script>

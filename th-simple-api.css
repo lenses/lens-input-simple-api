@@ -8,6 +8,11 @@
 
 }
 
+.data {
+	max-height: 50px;
+	overflow: hidden;
+}
+
 
 
 input {
