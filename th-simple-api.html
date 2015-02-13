@@ -17,14 +17,14 @@ Simple API component to make API calls.
 
 <polymer-element name="th-simple-api" attributes="url output apiKey">
   <template>
-    <label class="label">API URL: </label><link rel="stylesheet" href="th-simple-api.css">
-    <input is="core-input" value="{{url}}">
-    <label class="label">Num Records: </label><div class="data">{{output.length}}</div>
+    <div><label class="label">API URL: </label><link rel="stylesheet" href="th-simple-api.css"></div>
+    <div><input is="core-input" value="{{url}}"></div>
+    <div><label class="label">Num Records: </label><div class="data">{{output.length}}</div>
     
   </template>
   <script>
     Polymer({
-      url: 'https://api.enigma.io/v2/data/iTX3qf5cwspm7ryII3ii5zqeHqUuoO4MctfLJFf2xU8eletxHvcI4/us.gov.atf.federal-firearms-licenses.complete-listing',
+      url: null,//'https://api.enigma.io/v2/data/iTX3qf5cwspm7ryII3ii5zqeHqUuoO4MctfLJFf2xU8eletxHvcI4/us.gov.atf.federal-firearms-licenses.complete-listing',
       apiKey: 'iTX3qf5cwspm7ryII3ii5zqeHqUuoO4MctfLJFf2xU8eletxHvcI4',
       domReady: function() {
 
