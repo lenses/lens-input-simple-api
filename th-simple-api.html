@@ -1,0 +1,93 @@
+<link rel="import" href="../polymer/polymer.html"> 
+
+<!--
+A Thelma component providing solution to no problem in particular.
+
+##### Example
+
+    <th-simple-api></th-simple-api>
+
+@element th-simple-api
+@blurb Element providing solution to no problem in particular.
+@status alpha
+@homepage http://thelmanews.github.io/th-simple-api
+-->
+
+<polymer-element name="th-simple-api" attributes="url output apiKey">
+  <template>
+    <link rel="stylesheet" href="th-simple-api.css">
+    <content></content>
+  </template>
+  <script>
+    Polymer({
+      url: 'https://api.enigma.io/v2/data/iTX3qf5cwspm7ryII3ii5zqeHqUuoO4MctfLJFf2xU8eletxHvcI4/us.gov.atf.federal-firearms-licenses.complete-listing',
+      apiKey: 'iTX3qf5cwspm7ryII3ii5zqeHqUuoO4MctfLJFf2xU8eletxHvcI4',
+      domReady: function() {
+
+          
+          var self = this;
+          /*
+          setTimeout(function() {
+           // self.queryStatData();
+          }, 7000);
+          */
+          
+          self.queryData();
+
+      }, 
+
+      queryData: function() {
+
+
+          var self = this;
+          var url = self.url;
+          
+          self._makeCORSCall(url);
+
+      },
+
+
+
+
+      _makeCORSCall: function(url , mycallback) {
+
+            var self = this;
+            var method = 'GET';
+            var xhr = new XMLHttpRequest();
+            if ("withCredentials" in xhr) {
+              xhr.open(method, url, true);
+            } else if (typeof XDomainRequest != "undefined") {
+              xhr = new XDomainRequest();
+              xhr.open(method, url);
+            } else {
+              // CORS not supported.
+              xhr = null;
+            }
+
+            if (!xhr) {
+              alert('CORS not supported');
+              return;
+            }
+
+            // Response handlers.
+            xhr.onload = function() {
+
+              var data = JSON.parse(xhr.response);
+
+              self.output = data;
+              //mycallback.call(self,data);
+              //self._displayReturnedData(data);
+
+            };
+
+            xhr.onerror = function() {
+              alert('Woops, there was an error making the request.');
+            };
+
+            xhr.send();
+            console.log('request sent');
+      },           
+      
+    });
+  </script>
+</polymer-element>
