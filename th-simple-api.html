@@ -3,11 +3,11 @@
 
 
 <!--
-Simple API component to make API calls.
+Simple API component to make API calls. If the API returns JSON with a header followed by an array of results, it will return the first array. Flattens the results to be one level deep, and sends the reuslts to <code>output</code>
 
 ##### Example
 
-    <th-simple-api></th-simple-api>
+    <th-simple-api url="http://api.openweathermap.org/data/2.5/weather?q=New+York&units=imperial"></th-simple-api>
 
 @element th-simple-api
 @blurb Simple API component to make API calls.
@@ -15,7 +15,7 @@ Simple API component to make API calls.
 @homepage http://thelmanews.github.io/th-simple-api
 -->
 
-<polymer-element name="th-simple-api" attributes="url output apiKey">
+<polymer-element name="th-simple-api" attributes="url output">
   <template>
     <div><label class="label">API URL: </label><link rel="stylesheet" href="th-simple-api.css"></div>
     <div><input is="core-input" value="{{url}}"></div>
@@ -24,26 +24,39 @@ Simple API component to make API calls.
   </template>
   <script>
     Polymer({
+
+      /**
+       *  URL for the API call
+       *  
+       *  @property url
+       *  @type string
+       *  @default null
+       */
       url: null,//'https://api.enigma.io/v2/data/iTX3qf5cwspm7ryII3ii5zqeHqUuoO4MctfLJFf2xU8eletxHvcI4/us.gov.atf.federal-firearms-licenses.complete-listing',
-      apiKey: 'iTX3qf5cwspm7ryII3ii5zqeHqUuoO4MctfLJFf2xU8eletxHvcI4',
+
       domReady: function() {
 
-          
           var self = this;
 
-          if(this.url) {         
+          if(this.url) {
             self.queryData();
           }
 
       }, 
 
-      queryData: function() {
+      /**
+       *  Query the API, flatten results, and set <code>output</code>.
+       *  
+       *  @method queryData
+       *  @param {function} callback  optional callback to parse your data manually
+       */
+      queryData: function(callback) {
 
 
           var self = this;
           var url = self.url;
           
-          self._makeCORSCall(url);
+          self._makeCORSCall(url, callback);
 
       },
 
@@ -73,16 +86,26 @@ Simple API component to make API calls.
 
             // Response handlers.
             xhr.onload = function() {
+              // fire custom callback if given
+              if (mycallback) {
+                mycallback(xhr);
+              }
 
+              // parse data
               var data = JSON.parse(xhr.response);
 
               var firstArray = self._findFirstArray(data, 2);
 
-              self.output = self._flattenJSONArray(firstArray);
-              
+              // if there is no first array, flatten the entire response
+              if (!firstArray) {
+                self.output = self._flattenJSON(data);
+              }
+              // otherwise, flatten the first array
+              else {
+                self.output = self._flattenJSONArray(firstArray);
+              }
+
               //self.output = self._flattenFirstArrayInJSON(firstArray, 1);
-
-
             };
 
             xhr.onerror = function() {
@@ -90,16 +113,18 @@ Simple API component to make API calls.
             };
 
             xhr.send();
-      }, 
-
+      },
 
       /**
-       * Recursively looks for the first Array with the size equal greater than minArraySize
-       * @param  {JSON} data         Input data, A deep JSON file including an array containing desired data
-       * @param  {Number} minArraySize Minimum size of the array. If function finds an array smaller than this ignores it 
-       *                               and goes deeper to find an array with at least that minimum size
-       * @return {Array}              Found array
-       */
+       *  Recursively looks for the first Array with the size 
+       *  equal greater than minArraySize
+       *
+       *  [@method] _findFirstArray
+       *  [@param]  {JSON} data         Input data, A deep JSON file including an array containing desired data
+       *  [@param]  {Number} minArraySize Minimum size of the array. If function finds an array smaller than this ignores it and goes deeper to find an array with at least that minimum size
+       *  [@return] {Array}              Found array
+       *  @private
+       **/
       _findFirstArray: function(data, minArraySize) {
 
         var result = {};
@@ -133,22 +158,25 @@ Simple API component to make API calls.
       },
       /**
        * Flattens the Objects in the array. If objects within array are already flat (one level deep) doesn't do anything.
-       * @param  {Array} array Input array
-       * @return {Array}       Flattened array
+       *
+       * [@method] _flattenJSONArray
+       * [@param]  Array array Input array
+       * [@return] Array       Flattened array
+       * @private
        */
       _flattenJSONArray: function(array) {
-
         var flatArray = array.map(function(item,index) {
           return this._flattenJSON(item);
         }.bind(this));
-
         return flatArray;
-
       },
       /**
        * Recursively iterates over every element of the JSON object and creates a flat (one level deep) Object
-       * @param  {JSON} data input
-       * @return {JSON}      flattened output
+       * 
+       * [@method] _flattenJSON
+       * [@param]  {JSON} data input
+       * [@return] {JSON}      flattened output
+       * @private
        */
       _flattenJSON: function(data) {
         var result = {};
@@ -172,7 +200,12 @@ Simple API component to make API calls.
         }
         recurse(data, "");
         return result;
-      }          
+      },
+
+      // fire th-output-ready when output is changed. Useful for tests.
+      outputChanged: function(){
+        this.fire("th-output-ready");
+      }
       
     });
   </script>
