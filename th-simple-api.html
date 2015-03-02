@@ -98,7 +98,7 @@ Simple API component to make API calls. If the API returns JSON with a header fo
 
               // if there is no first array, flatten the entire response
               if (!firstArray) {
-                self.output = self._flattenJSON(data);
+                self.output = [self._flattenJSON(data)];
               }
               // otherwise, flatten the first array
               else {

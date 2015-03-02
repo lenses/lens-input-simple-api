@@ -126,7 +126,7 @@
           var data = JSON.parse(xhr.response);
           originalJSON = data;
           flush(function() {
-            flatJSON['coord.lon'].should.equal(originalJSON['coord']['lon']);
+            flatJSON[0]['coord.lon'].should.equal(originalJSON['coord']['lon']);
             done();
           });
         }
