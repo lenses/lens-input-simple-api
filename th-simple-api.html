@@ -15,7 +15,7 @@ Simple API component to make API calls. If the API returns JSON with a header fo
 @homepage http://thelmanews.github.io/th-simple-api
 -->
 
-<polymer-element name="th-simple-api" attributes="url output minRows">
+<polymer-element name="th-simple-api" attributes="url output outputRaw minRows">
   <template>
     <link rel="stylesheet" href="th-simple-api.css">
     <div class="th-container">
@@ -28,6 +28,23 @@ Simple API component to make API calls. If the API returns JSON with a header fo
   </template>
   <script>
     Polymer({
+
+      /**
+       * Output data
+       *
+       * @property output
+       * @type object
+       * @default undefined
+       */
+      
+      /**
+       * Output data before flatening.
+       *
+       * @property outputRaw
+       * @type object
+       * @default undefined
+       */
+      
 
       /**
        *  URL for the API call
@@ -103,7 +120,7 @@ Simple API component to make API calls. If the API returns JSON with a header fo
               // parse data
               var data = JSON.parse(xhr.response);
 
-              console.log('self.minRows',self.minRows);
+              self.outputRaw = data;
 
               var firstArray = self._findFirstArray(data, self.minRows);
 
@@ -137,8 +154,6 @@ Simple API component to make API calls. If the API returns JSON with a header fo
        *  @private
        **/
       _findFirstArray: function(data, minArraySize) {
-
-        console.log('minArraySize',minArraySize);
 
         var result = {};
         var firstArray = null; 
