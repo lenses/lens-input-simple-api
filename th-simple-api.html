@@ -15,11 +15,15 @@ Simple API component to make API calls. If the API returns JSON with a header fo
 @homepage http://thelmanews.github.io/th-simple-api
 -->
 
-<polymer-element name="th-simple-api" attributes="url output">
+<polymer-element name="th-simple-api" attributes="url output minRows">
   <template>
-    <div><label class="label">API URL: </label><link rel="stylesheet" href="th-simple-api.css"></div>
-    <div><input is="core-input" value="{{url}}"></div>
-    <div><label class="label">Num Records: </label><div class="data">{{output.length}}</div>
+    <link rel="stylesheet" href="th-simple-api.css">
+    <div class="th-container">
+      <div><label class="label">API URL: </label><input is="core-input" value="{{url}}"></div>
+      <div><label class="label">Expect at least <input class="count" is="core-input" value="{{minRows}}"> datapoints.</label></div>
+
+      <div><label class="label">Num Records: </label><div class="data">{{output.length}}</div></div>
+    </div>
     
   </template>
   <script>
@@ -33,6 +37,16 @@ Simple API component to make API calls. If the API returns JSON with a header fo
        *  @default null
        */
       url: null,//'https://api.enigma.io/v2/data/iTX3qf5cwspm7ryII3ii5zqeHqUuoO4MctfLJFf2xU8eletxHvcI4/us.gov.atf.federal-firearms-licenses.complete-listing',
+
+      /**
+       * Minimum number of rows to expect in the result data, otherwise ignores it
+       * @type {Number}
+       */
+      minRows: 1,
+
+      observe: {
+        minRows: "queryData"
+      },
 
       domReady: function() {
 
@@ -48,15 +62,14 @@ Simple API component to make API calls. If the API returns JSON with a header fo
        *  Query the API, flatten results, and set <code>output</code>.
        *  
        *  @method queryData
-       *  @param {function} callback  optional callback to parse your data manually
        */
-      queryData: function(callback) {
+      queryData: function() {
 
 
           var self = this;
           var url = self.url;
           
-          self._makeCORSCall(url, callback);
+          self._makeCORSCall(url);
 
       },
 
@@ -64,7 +77,7 @@ Simple API component to make API calls. If the API returns JSON with a header fo
         this.queryData();
       },
 
-      _makeCORSCall: function(url , mycallback) {
+      _makeCORSCall: function(url) {
 
             var self = this;
             var method = 'GET';
@@ -86,15 +99,13 @@ Simple API component to make API calls. If the API returns JSON with a header fo
 
             // Response handlers.
             xhr.onload = function() {
-              // fire custom callback if given
-              if (mycallback) {
-                mycallback(xhr);
-              }
 
               // parse data
               var data = JSON.parse(xhr.response);
 
-              var firstArray = self._findFirstArray(data, 2);
+              console.log('self.minRows',self.minRows);
+
+              var firstArray = self._findFirstArray(data, self.minRows);
 
               // if there is no first array, flatten the entire response
               if (!firstArray) {
@@ -126,6 +137,8 @@ Simple API component to make API calls. If the API returns JSON with a header fo
        *  @private
        **/
       _findFirstArray: function(data, minArraySize) {
+
+        console.log('minArraySize',minArraySize);
 
         var result = {};
         var firstArray = null; 

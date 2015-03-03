@@ -13,8 +13,11 @@
 	overflow: hidden;
 }
 
+.count {
+	width: 2.5em !important;
+}
 
 
-input {
+html /deep/ input[is=core-input] {
 	border: 1px solid #eee !important;
 }
