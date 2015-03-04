@@ -74,12 +74,12 @@
       test("set api url", function(done) {
 
         // set the event listener callback
-        myEl.removeEventListener("th-output-ready", callback);
+        myEl.removeEventListener("th-output-changed", callback);
         callback = function(e) {
           myEl.url.should.equal(enigmaURL);
           done();
         };
-        myEl.addEventListener("th-output-ready", callback);
+        myEl.addEventListener("th-output-changed", callback);
 
         // set input url
         myEl.url = enigmaURL;
@@ -94,7 +94,7 @@
       });
 
       test("accepts custom callback", function(done) {
-        myEl.removeEventListener("th-output-ready", callback);
+        myEl.removeEventListener("th-output-changed", callback);
 
         function customCallback(xhr) {
           var data = JSON.parse(xhr.response);
@@ -111,13 +111,13 @@
         var flatJSON = {};
 
         // set the event listener callback
-        myEl.removeEventListener("th-output-ready", callback);
+        myEl.removeEventListener("th-output-changed", callback);
         callback = function(e) {
           myEl.url.should.equal(weatherURL);
           flatJSON = myEl.output;
           // done();
         };
-        myEl.addEventListener("th-output-ready", callback);
+        myEl.addEventListener("th-output-changed", callback);
 
         // set input url
         myEl.url = weatherURL;

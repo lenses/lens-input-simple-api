@@ -230,9 +230,9 @@ Simple API component to make API calls. If the API returns JSON with a header fo
         return result;
       },
 
-      // fire th-output-ready when output is changed. Useful for tests.
+      // fire th-output-changed when output is changed. Useful for tests.
       outputChanged: function(){
-        this.fire("th-output-ready");
+        this.fire("th-output-changed");
       }
       
     });
