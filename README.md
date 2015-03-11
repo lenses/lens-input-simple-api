@@ -1,3 +1,3 @@
-# th-simple-api
+# lens-simple-api
 
-See the [component page](http://thelmanews.github.io/th-simple-api) for more information.
+See the [component page](http://lenses.github.io/lens-simple-api) for more information.
