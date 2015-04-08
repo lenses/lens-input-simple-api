@@ -81,13 +81,12 @@ Simple API component to make API calls. If the API returns JSON with a header fo
        *  
        *  @method queryData
        */
-      queryData: function() {
-
+      queryData: function(customCallback) {
 
           var self = this;
           var url = self.url;
           
-          self._makeCORSCall(url);
+          self._makeCORSCall(url, customCallback);
 
       },
 
@@ -95,7 +94,7 @@ Simple API component to make API calls. If the API returns JSON with a header fo
         this.queryData();
       },
 
-      _makeCORSCall: function(url) {
+      _makeCORSCall: function(url, customCallback) {
 
             var self = this;
             var method = 'GET';
@@ -134,6 +133,9 @@ Simple API component to make API calls. If the API returns JSON with a header fo
                 self.output = self._flattenJSONArray(firstArray);
               }
 
+              if (customCallback) {
+                customCallback(xhr);
+              }
               //self.output = self._flattenFirstArrayInJSON(firstArray, 1);
             };
 
