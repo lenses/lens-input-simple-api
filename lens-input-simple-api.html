@@ -18,6 +18,7 @@ Simple API component to make API calls. If the API returns JSON with a header fo
 <polymer-element name="lens-input-simple-api" attributes="url output outputRaw minRows">
   <template>
     <link rel="stylesheet" href="lens-input-simple-api.css">
+
     <div class="lens-container">
       <div><label class="label">API URL: </label><input is="core-input" value="{{url}}"></div>
       <div><label class="label">Expect at least <input class="count" is="core-input" value="{{minRows}}"> datapoints.</label></div>
@@ -145,7 +146,7 @@ Simple API component to make API calls. If the API returns JSON with a header fo
 
       /**
        *  Recursively looks for the first Array with the size 
-       *  equal greater than minArraySize
+       *  greater than or equal to minArraySize
        *
        *  [@method] _findFirstArray
        *  [@param]  {JSON} data         Input data, A deep JSON file including an array containing desired data
@@ -230,9 +231,9 @@ Simple API component to make API calls. If the API returns JSON with a header fo
         return result;
       },
 
-      // fire th-output-changed when output is changed. Useful for tests.
+      // fire lens-output-changed when output is changed. Useful for tests.
       outputChanged: function(){
-        this.fire("th-output-changed");
+        this.fire("lens-output-changed");
       }
       
     });
