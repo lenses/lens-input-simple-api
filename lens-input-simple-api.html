@@ -15,7 +15,7 @@ Simple API component to make API calls. If the API returns JSON with a header fo
 @homepage http://lenses.github.io/lens-input-simple-api
 -->
 
-<polymer-element name="lens-input-simple-api" attributes="url output outputRaw minRows">
+<polymer-element name="lens-input-simple-api" attributes="url input output outputRaw minRows">
   <template>
     <link rel="stylesheet" href="lens-input-simple-api.css">
     <div class="lens-container">
@@ -62,7 +62,8 @@ Simple API component to make API calls. If the API returns JSON with a header fo
       minRows: 1,
 
       observe: {
-        minRows: "queryData"
+        minRows: "queryData",
+        input: "queryData"
       },
 
       domReady: function() {
